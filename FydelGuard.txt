@@ -1,0 +1,24 @@
+FydelGuard/
+├── CMakeLists.txt               # Build profissional
+├── README.md
+├── docs/
+├── include/
+│   ├── Scanner.h                 # Motor de varredura (ClamAV + próprio)
+│   ├── ScanWorker.h              # Thread assíncrona
+│   ├── FirewallManager.h         # Controle UFW nativo
+│   ├── RealTimeMonitor.h         # fanotify/inotify — proteção em tempo real
+│   ├── Quarantine.h              # Sistema de quarentena
+│   ├── Updater.h                 # Atualização de assinaturas
+│   ├── Logger.h                  # Logs e auditoria
+│   └── GuardView.h                # Interface Qt
+├── src/
+│   ├── Scanner.cpp
+│   ├── ScanWorker.cpp
+│   ├── FirewallManager.cpp
+│   ├── RealTimeMonitor.cpp
+│   ├── Quarantine.cpp
+│   ├── Updater.cpp
+│   ├── Logger.cpp
+│   ├── GuardView.cpp
+│   └── main.cpp
+└── resources/
