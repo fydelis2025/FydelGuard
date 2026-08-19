@@ -22,6 +22,12 @@ O **FydelGuard** é uma solução de segurança moderna e completa voltada para 
 
 ---
 
+## Telas e Imagens do Sistema
+
+<p align="center">
+  <img src="https://github.com/fydelis2025/FydelGuard/blob/main/FydelGuard.png" alt="FydelisTechOS Dashboard" width="100%">
+</p>
+
 ## 🛠️ Tecnologias Utilizadas
 
 * **Linguagem:** C++17
