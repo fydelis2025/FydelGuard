@@ -10,9 +10,9 @@ echo "========================================="
 echo "  📦 Preparando e Compilando o FydelGuard"
 echo "========================================="
 
-# 0. Verifica e instala dependências de compilação automaticamente se necessário
+# 0. Verifica e instala todas as dependências de compilação e desenvolvimento Qt/ClamAV
 echo "[0/5] 🔍 Verificando dependências de desenvolvimento..."
-NEEDED_DEPS="libclamav-dev libsqlite3-dev build-essential cmake fakeroot"
+NEEDED_DEPS="build-essential cmake fakeroot libclamav-dev libsqlite3-dev qtbase5-dev libqt5svg5-dev"
 MISSING_DEPS=""
 
 for dep in ${NEEDED_DEPS}; do
@@ -22,7 +22,7 @@ for dep in ${NEEDED_DEPS}; do
 done
 
 if [ -n "${MISSING_DEPS}" ]; then
-    echo "⚙️ Instalando dependências ausentes:${MISSING_DEPS}..."
+    echo "⚙️ Instalando dependências de compilação ausentes:${MISSING_DEPS}..."
     sudo apt update
     sudo apt install -y ${MISSING_DEPS}
 fi
@@ -89,7 +89,7 @@ cat > "${DEB_DIR}/usr/share/icons/hicolor/scalable/apps/fydelguard.svg" << 'SVGE
 </svg>
 SVGEOF
 
-# Configuração
+# Configuração padrão
 cat > "${DEB_DIR}/etc/fydelguard/fydelguard.conf" << 'CONFEOF'
 [geral]
 modo=grafico
@@ -159,8 +159,8 @@ ReadWritePaths=/var/lib/fydelguard /var/log/fydelguard
 WantedBy=multi-user.target
 SERVICEEOF
 
-# 4. Cria arquivos DEBIAN
-echo "[4/5] 📝 Criando metadados do pacote..."
+# 4. Cria arquivos DEBIAN e dependências de runtime robustas
+echo "[4/5] 📝 Criando metadados e definindo dependências do pacote..."
 
 cat > "${DEB_DIR}/DEBIAN/control" << CTLEOF
 Package: fydelguard
@@ -168,7 +168,7 @@ Version: ${APP_VERSION}
 Section: security
 Priority: optional
 Architecture: ${ARCH}
-Depends: clamav, libqt5widgets5 (>= 5.15), libsqlite3-0 (>= 3.40), ufw, clamav-daemon, clamav-freshclam
+Depends: clamav, clamav-daemon, clamav-freshclam, ufw, libsqlite3-0 (>= 3.30), libqt5widgets5 (>= 5.15), libqt5gui5 (>= 5.15), libqt5core5a (>= 5.15), libqt5svg5
 Recommends: qt5-qmake
 Maintainer: Adiel Santos Fontes <adiel@fydelistech.com>
 Description: FydelGuard - Antivírus Profissional para FydelisTech

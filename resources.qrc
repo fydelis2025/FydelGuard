@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file>icons/shield.svg</file>
+    <file>icons/threat.svg</file>
+    <file>icons/files.svg</file>
+    <file>icons/clock.svg</file>
+    <file>icons/update.svg</file>
+    <file>icons/status.svg</file>
+    <file>icons/scan.svg</file>
+    <file>icons/realtime.svg</file>
+    <file>icons/quarantine.svg</file>
+    <file>icons/firewall.svg</file>
+    <file>icons/settings.svg</file>
+  </qresource>
+</RCC>
+

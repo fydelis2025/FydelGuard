@@ -4,12 +4,17 @@
 #include <QMainWindow>
 #include <QListWidget>
 #include <QStackedWidget>
-#include <QLabel>
-#include <QPushButton>
 #include <QTableWidget>
 #include <QProgressBar>
-#include <QLineEdit>
+#include <QLabel>
+#include <QPushButton>
+#include <QTimer>
+#include <QMessageBox>
+#include <QtConcurrent>
 #include <memory>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QCloseEvent>
 
 class Scanner;
 class ScanWorker;
@@ -17,16 +22,28 @@ class RealTimeMonitor;
 class QuarantineManager;
 class Updater;
 class FirewallManager;
+class QSystemTrayIcon;
+class QMenu;
 
 class GuardView : public QMainWindow {
     Q_OBJECT
-
+    
+protected:
+    void closeEvent(QCloseEvent* event) override;
+        
 public:
     explicit GuardView(QWidget* parent = nullptr);
     ~GuardView();
 
+private:
+    QSystemTrayIcon* m_trayIcon;
+    QMenu* m_trayMenu;
+
+    void createTrayIcon();
 private slots:
-    void delayedInit();
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
+private slots:
     void switchPage(int row);
     void onScanFile();
     void onScanDir();
@@ -37,11 +54,15 @@ private slots:
     void onDeleteRule();
     void onUpdateSignatures();
 
+    void updateSystemStatsAsync();   // dispara thread
+    void updateSystemStatsUI(int cpu, int ram, QString net, QString disk); // atualiza UI
+
 private:
-    void setupUi();
     void applyStyle();
-    
-    // ✅ Declaração única das páginas e utilitários
+    void delayedInit();
+    void setupUi();
+    void refreshQuarantineTable();
+
     QWidget* createStatusPage();
     QWidget* createScanPage();
     QWidget* createMonitorPage();
@@ -50,8 +71,23 @@ private:
     QWidget* createSettingsPage();
     QWidget* createScrollablePage(QWidget* content);
 
-    QListWidget* m_sidebar = nullptr;
-    QStackedWidget* m_stackedPages = nullptr;
+    QListWidget* m_sidebar;
+    QStackedWidget* m_stackedPages;
+
+    QPushButton* m_btnScanFile;
+    QPushButton* m_btnScanDir;
+    QPushButton* m_btnStop;
+    QLabel* m_statusLabel;
+    QTableWidget* m_resultsTable;
+
+    QProgressBar* m_cpuBar;
+    QProgressBar* m_ramBar;
+    QLabel* m_netLabel;
+    QLabel* m_diskLabel;
+
+    QTableWidget* m_quarantineTable;
+    QPushButton* m_btnToggleFW;
+    QTableWidget* m_rulesTable;
 
     std::unique_ptr<Scanner> m_scanner;
     std::unique_ptr<ScanWorker> m_worker;
@@ -59,17 +95,7 @@ private:
     std::unique_ptr<QuarantineManager> m_quarantine;
     std::unique_ptr<Updater> m_updater;
     std::unique_ptr<FirewallManager> m_firewall;
-
-    QLabel* m_statusLabel = nullptr;
-    QTableWidget* m_resultsTable = nullptr;
-    QTableWidget* m_rulesTable = nullptr;
-    QTableWidget* m_quarantineTable = nullptr;
-    QPushButton* m_btnScanFile = nullptr;
-    QPushButton* m_btnScanDir = nullptr;
-    QPushButton* m_btnStop = nullptr;
-    QPushButton* m_btnToggleFW = nullptr;
-    QLineEdit* m_editPort = nullptr;
-    QLineEdit* m_editIp = nullptr;
 };
 
-#endif
+#endif // GUARDVIEW_H
+

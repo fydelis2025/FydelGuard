@@ -1,8 +1,8 @@
 #ifndef QUARANTINEMANAGER_H
 #define QUARANTINEMANAGER_H
-
 #include <string>
 #include <vector>
+#include <mutex>
 #include <sqlite3.h>
 
 struct QuarantineEntry {
@@ -27,8 +27,13 @@ public:
 private:
     sqlite3* m_db = nullptr;
     std::string m_quarantineDir = "/var/lib/fydelguard/quarantine/";
+    std::mutex m_dbMutex; // protege m_db: pode ser chamado tanto pela GUI quanto pelo RealTimeMonitor
+
     bool createTables();
     std::string currentTimestamp();
-};
 
+    // Busca uma única entrada por id (evita varrer a tabela inteira em restoreFile/deleteFile).
+    // Retorna false se não encontrada. Assume m_dbMutex já travado pelo chamador.
+    bool findByIdLocked(int id, QuarantineEntry& out);
+};
 #endif
